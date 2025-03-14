@@ -56,6 +56,8 @@ const Dashboard: React.FC = () => {
       }
     };
 
+    fetchData();
+
     const unsubscribe = onValue(ref(database, 'teams'), (snapshot) => {
       const teamsData = snapshot.val();
       if (teamsData) {
@@ -70,7 +72,6 @@ const Dashboard: React.FC = () => {
     });
 
     return () => {
-      fetchData();
       unsubscribe();
     };
   }, []);
