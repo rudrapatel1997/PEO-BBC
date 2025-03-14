@@ -113,24 +113,29 @@ const Scoring: React.FC = () => {
       setError('');
       setSuccess('');
 
+      // Create the judge score
       const newScore: JudgeScore = {
-        teamNumber,
+        teamNumber: team.teamNumber,
         judgeId: user.uid,
+        judgeName: user.name,
         scores,
         comments,
         timestamp: new Date().toISOString(),
       };
 
+      // Add the new score
       const scoresRef = ref(database, 'judgeScores');
       const newScoreRef = push(scoresRef);
       await set(newScoreRef, newScore);
 
-      // Update team status to completed
-      const teamRef = ref(database, `teams/${teamNumber}`);
-      await set(teamRef, {
-        ...team,
-        checkInStatus: 'completed',
-      });
+      // Update only the team status
+      if (team.id) {
+        const teamRef = ref(database, `teams/${team.id}`);
+        await set(teamRef, {
+          ...team,
+          status: 'completed'
+        });
+      }
 
       setSuccess('Score submitted successfully!');
       setTeam(null);
@@ -145,7 +150,7 @@ const Scoring: React.FC = () => {
       setComments('');
     } catch (err) {
       console.error('Error submitting score:', err);
-      setError('Failed to submit score');
+      setError('Failed to submit score. Please try again.');
     }
   };
 

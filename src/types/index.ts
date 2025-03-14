@@ -22,6 +22,7 @@ export interface Team {
 export interface JudgeScore {
   teamNumber: string;
   judgeId: string;
+  judgeName: string;
   scores: {
     criteria1: number;
     criteria2: number;
