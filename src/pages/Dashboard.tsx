@@ -27,31 +27,48 @@ const Dashboard: React.FC = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    console.log('Dashboard: Starting data fetch');
+    
     const fetchData = async () => {
       try {
+        console.log('Dashboard: Fetching teams data');
         // Fetch teams
         const teamsRef = ref(database, 'teams');
         const teamsSnapshot = await get(teamsRef);
+        console.log('Dashboard: Teams snapshot received', teamsSnapshot.exists());
+        
         if (teamsSnapshot.exists()) {
           const teamsData = teamsSnapshot.val();
+          console.log('Dashboard: Teams data', teamsData);
           const teamsArray = Object.entries(teamsData).map(([id, team]: [string, any]) => ({
             ...team,
             id,
           }));
           setTeams(teamsArray);
+        } else {
+          console.log('Dashboard: No teams data found');
+          setTeams([]);
         }
 
+        console.log('Dashboard: Fetching scores data');
         // Fetch team scores
         const scoresRef = ref(database, 'teamScores');
         const scoresSnapshot = await get(scoresRef);
+        console.log('Dashboard: Scores snapshot received', scoresSnapshot.exists());
+        
         if (scoresSnapshot.exists()) {
           const scoresData = scoresSnapshot.val();
+          console.log('Dashboard: Scores data', scoresData);
           const scoresArray = Object.values(scoresData) as TeamScore[];
           setTeamScores(scoresArray);
+        } else {
+          console.log('Dashboard: No scores data found');
+          setTeamScores([]);
         }
       } catch (err) {
-        console.error('Error fetching data:', err);
+        console.error('Dashboard: Error fetching data:', err);
       } finally {
+        console.log('Dashboard: Setting loading to false');
         setLoading(false);
       }
     };
@@ -59,19 +76,23 @@ const Dashboard: React.FC = () => {
     fetchData();
 
     const unsubscribe = onValue(ref(database, 'teams'), (snapshot) => {
+      console.log('Dashboard: Real-time teams update received');
       const teamsData = snapshot.val();
       if (teamsData) {
+        console.log('Dashboard: New teams data', teamsData);
         const teamsArray = Object.entries(teamsData).map(([id, team]: [string, any]) => ({
           id,
           ...team,
         }));
         setTeams(teamsArray);
       } else {
+        console.log('Dashboard: No teams in real-time update');
         setTeams([]);
       }
     });
 
     return () => {
+      console.log('Dashboard: Cleaning up listener');
       unsubscribe();
     };
   }, []);

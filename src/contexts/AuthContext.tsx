@@ -31,27 +31,47 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    console.log('AuthContext: Setting up auth listener');
+    
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+      console.log('AuthContext: Auth state changed', firebaseUser?.email);
+      
       if (firebaseUser) {
-        // Get additional user data from the database
-        const userRef = ref(database, `users/${firebaseUser.uid}`);
-        const snapshot = await get(userRef);
-        if (snapshot.exists()) {
-          const userData = snapshot.val();
-          setUser({
-            uid: firebaseUser.uid,
-            email: firebaseUser.email!,
-            role: userData.role,
-            name: userData.name
-          });
+        try {
+          console.log('AuthContext: Fetching user role');
+          const userRef = ref(database, `users/${firebaseUser.uid}`);
+          const snapshot = await get(userRef);
+          console.log('AuthContext: User data snapshot', snapshot.exists());
+          
+          if (snapshot.exists()) {
+            const userData = snapshot.val();
+            console.log('AuthContext: User data', userData);
+            setUser({
+              uid: firebaseUser.uid,
+              email: firebaseUser.email || '',
+              role: userData.role,
+              name: userData.name
+            });
+          } else {
+            console.log('AuthContext: No user data found');
+            setUser(null);
+          }
+        } catch (error) {
+          console.error('AuthContext: Error fetching user role:', error);
+          setUser(null);
         }
       } else {
+        console.log('AuthContext: No firebase user');
         setUser(null);
       }
+      
       setLoading(false);
     });
 
-    return unsubscribe;
+    return () => {
+      console.log('AuthContext: Cleaning up auth listener');
+      unsubscribe();
+    };
   }, []);
 
   const signIn = async (email: string, password: string) => {
