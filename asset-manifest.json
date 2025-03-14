@@ -1,13 +1,13 @@
 {
   "files": {
     "main.css": "/PEO-BBC/static/css/main.7a7b9266.css",
-    "main.js": "/PEO-BBC/static/js/main.1ded94eb.js",
+    "main.js": "/PEO-BBC/static/js/main.1138cb5d.js",
     "index.html": "/PEO-BBC/index.html",
     "main.7a7b9266.css.map": "/PEO-BBC/static/css/main.7a7b9266.css.map",
-    "main.1ded94eb.js.map": "/PEO-BBC/static/js/main.1ded94eb.js.map"
+    "main.1138cb5d.js.map": "/PEO-BBC/static/js/main.1138cb5d.js.map"
   },
   "entrypoints": [
     "static/css/main.7a7b9266.css",
-    "static/js/main.1ded94eb.js"
+    "static/js/main.1138cb5d.js"
   ]
 }
