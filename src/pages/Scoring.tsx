@@ -131,10 +131,20 @@ const Scoring: React.FC = () => {
       // Update only the team status
       if (team.id) {
         const teamRef = ref(database, `teams/${team.id}`);
-        await set(teamRef, {
-          ...team,
-          status: 'completed'
-        });
+        // Clean up the team object by removing undefined values
+        const cleanTeam = {
+          teamNumber: team.teamNumber,
+          teamName: team.teamName,
+          schoolName: team.schoolName,
+          student1: team.student1,
+          student2: team.student2,
+          category: team.category,
+          status: 'completed' as const,
+          createdAt: team.createdAt,
+          arrivalTime: team.arrivalTime || null,
+          checkInTime: team.checkInTime || null
+        };
+        await set(teamRef, cleanTeam);
       }
 
       setSuccess('Score submitted successfully!');
